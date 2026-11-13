@@ -10,15 +10,15 @@ Le commit 2072690 ajoute get_first_date et get_last_date dans src/main.py et aff
 
 Résultats : 21 observations pour chaque série, du 2026-09-01 au 2026-09-30. AAPL : 250.00 à 266.20 USD. SP500 : 6600.00 à 6742.00.
 
-## Captures à ajouter
+## Captures enregistrées
 
-Les captures suivantes doivent être prises dans le terminal réel et enregistrées dans ce dossier. Elles ne sont pas encore présentes.
+Les trois captures originales prises dans le terminal VS Code sont présentes dans ce dossier.
 
 - 01_terminal_python.png : exécution de python src/main.py.
 - 02_git_status_log.png : git status et git log --oneline -5.
 - 03_branch_merge.png : git branch, git branch --merged et git log --oneline --graph --decorate --all.
 
-La branche feature/display-observation-dates est conservée pour permettre la capture de la preuve de fusion. Elle ne doit être supprimée qu’après capture et validation de l’enseignant.
+La branche feature/display-observation-dates est conservée après capture de la preuve de fusion. Elle ne doit être supprimée qu’après validation de l’enseignant. Dans la deuxième capture, le fichier non suivi est la première image ajoutée au dossier ; les preuves sont ensuite enregistrées dans un commit documentaire.
 
 Le fichier docs/04_CHECKPOINTS_AND_EVIDENCE.md référencé par le TD04 n’est pas présent dans cette copie du dépôt ; cette liste reprend les noms et le dossier demandés dans labs/TD04_BRANCHES_AND_MERGE.md.
 
