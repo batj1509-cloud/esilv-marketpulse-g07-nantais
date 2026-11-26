@@ -1,5 +1,4 @@
 from pathlib import Path
-import csv
 import json
 
 from analytics import (
@@ -8,15 +7,13 @@ from analytics import (
     calculate_period_return,
     calculate_relative_performance,
 )
+from providers.yahoo_provider import YAHOO_SYMBOLS, fetch_yahoo_prices
 
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "sample"
 
-# These starter values mirror config/settings.yml.
-# settings.yml is a human-readable configuration contract in the CORE.
-# Parsing YAML is optional and is not required by the 18-hour lab sequence.
-LOOKBACK_LABEL = "1 month"
-INTERVAL_LABEL = "Daily"
+PERIOD = "1mo"
+INTERVAL = "1d"
 
 
 def load_instruments():
@@ -24,25 +21,9 @@ def load_instruments():
         return json.load(file)
 
 
-def normalize_price_row(row):
-    return {
-        "date": row["date"],
-        "ticker": row["ticker"],
-        "open": float(row["open"]),
-        "high": float(row["high"]),
-        "low": float(row["low"]),
-        "close": float(row["close"]),
-        "volume": int(row["volume"]),
-    }
-
-
-def load_prices():
-    with open(DATA_DIR / "prices.csv", encoding="utf-8", newline="") as file:
-        return [normalize_price_row(row) for row in csv.DictReader(file)]
-
-
-def filter_prices(prices, ticker):
-    return [row for row in prices if row["ticker"] == ticker]
+def load_yahoo_prices(asset):
+    ticker = asset["ticker"]
+    return fetch_yahoo_prices(YAHOO_SYMBOLS[ticker], ticker, PERIOD, INTERVAL)
 
 
 def get_first_close(prices):
@@ -73,13 +54,15 @@ def display_market_summary(asset, prices, show_currency=True):
 
 def main():
     instruments = load_instruments()
-    prices = load_prices()
 
     instrument = instruments["instrument"]
     benchmark = instruments["benchmark"]
 
-    instrument_prices = filter_prices(prices, instrument["ticker"])
-    benchmark_prices = filter_prices(prices, benchmark["ticker"])
+    try:
+        instrument_prices = load_yahoo_prices(instrument)
+        benchmark_prices = load_yahoo_prices(benchmark)
+    except ValueError as error:
+        raise SystemExit(str(error)) from None
     aligned_instrument, aligned_benchmark = align_series(
         instrument_prices, benchmark_prices,
     )
@@ -96,9 +79,10 @@ def main():
 
     print("=== MarketPulse ===")
     print()
+    print("Provider : Yahoo Finance via yfinance")
     print("Market configuration")
-    print(f"Period   : {LOOKBACK_LABEL}")
-    print(f"Interval : {INTERVAL_LABEL}")
+    print(f"Period   : 1 month ({PERIOD})")
+    print(f"Interval : Daily ({INTERVAL})")
     print()
     print("Instrument")
     display_market_summary(instrument, aligned_instrument)
